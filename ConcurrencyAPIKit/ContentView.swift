@@ -8,12 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var viewModel = ContentViewModel()
+    @State private var task: Task<Void, Never>?
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        VStack(spacing: 16) {
+            Text(viewModel.text)
+            if viewModel.isLoading {
+                Button("Cancel") {
+                    task?.cancel()
+                }
+            } else {
+                Button("Start") {
+                    task = Task {
+                        await viewModel.load()
+                    }
+                }
+            }
         }
         .padding()
     }
